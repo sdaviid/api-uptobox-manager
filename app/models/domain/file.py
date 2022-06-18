@@ -18,7 +18,7 @@ from app.models.base import ModelBase
 from app.core.database import Base
 from datetime import datetime
 
-from utils.utils import gen_random_md5
+from utils.utils import md5
 
 
 class File(ModelBase, Base):
@@ -35,7 +35,7 @@ class File(ModelBase, Base):
         file = File()
         file.origin = data.origin
         file.url = data.url
-        file.md5_key = gen_random_md5()
+        file.md5_key = md5(data.origin[data.origin.rindex('/')+1:])
         session.add(file)
         session.commit()
         session.refresh(file)
