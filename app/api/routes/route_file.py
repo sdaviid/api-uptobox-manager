@@ -109,4 +109,31 @@ def download(md5_key: str, response: Response, db: Session = Depends(get_db)):
             "error": True,
             "message": "Failed find file"
         }
-        
+
+
+
+@router.get(
+    '/generate/',
+    status_code=status.HTTP_200_OK
+)
+def download(uptobox_link: str, response: Response, db: Session = Depends(get_db)):
+    temp_account = Account.find_premium_api(session=db)
+    if temp_account:
+        temp_uptobox = uptobox(temp_account.api_key)
+        url_code = uptobox_link[uptobox_link.rindex('/')+1:]
+        print(url_code)
+        temp_direct_link = temp_uptobox.generate_download_link(url_code)
+        if temp_direct_link:
+            return {
+                "download": temp_direct_link
+            }
+        else:
+            return {
+                "error": True,
+                "message": "Couldnt generate download link"
+            }
+    else:
+        return {
+            "error": True,
+            "message": "No account avalaible"
+        }
