@@ -18,27 +18,26 @@ from app.models.base import ModelBase
 from app.core.database import Base
 from datetime import datetime
 
+from utils.utils import gen_random_md5
 
-class Account(ModelBase, Base):
-    __tablename__ = "account"
+
+class File(ModelBase, Base):
+    __tablename__ = "file"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    api_key = Column(String(255))
-    type_key = Column(String(255))
+    origin = Column(String(255))
+    url = Column(String(255))
+    md5_key = Column(String(255))
     date_created = Column(DateTime, default=datetime.utcnow())
 
 
     @classmethod
     def add(cls, session, data):
-        account = Account()
-        account.api_key = data.api_key
-        account.type_key = data.type_key
-        session.add(account)
+        file = File()
+        file.origin = data.origin
+        file.url = data.url
+        file.md5_key = gen_random_md5()
+        session.add(file)
         session.commit()
-        session.refresh(account)
-        return Account.find_by_id(session=session, id=account.id)
-
-
-    @classmethod
-    def find_upload_api(cls, session):
-        return session.query(cls).filter_by(type_key='U').first()
+        session.refresh(file)
+        return File.find_by_id(session=session, id=file.id)
 

@@ -1,4 +1,5 @@
 import requests
+import json
 
 class uptobox(object):
     def __init__(self, api_key):
@@ -39,9 +40,11 @@ class uptobox(object):
             payload = {
                 'urls': f'["{link}"]'
             }
-            with session.post(url, data=payload, headers=headers, stream=True) as resp:
-                for line in resp.iter_lines():
-                    if line:
-                        print(line)
-
-
+            try:
+                response = session.post(url, data=payload, headers=headers)
+                if response.status_code == 200:
+                    temp_json_response = json.loads(response.text.strip().split('\n')[-1])
+                    return temp_json_response.get('url', False)
+            except Exception as err:
+                print(f'uptobox.upload_remote exception - {err}')
+        return False
