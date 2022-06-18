@@ -41,3 +41,8 @@ class File(ModelBase, Base):
         session.refresh(file)
         return File.find_by_id(session=session, id=file.id)
 
+
+    @classmethod
+    def find_by_md5(cls, session, md5_key):
+        return session.query(File).filter_by(md5_key=md5_key).first()
+

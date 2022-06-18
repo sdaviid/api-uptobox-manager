@@ -48,3 +48,13 @@ class uptobox(object):
             except Exception as err:
                 print(f'uptobox.upload_remote exception - {err}')
         return False
+    def generate_download_link(self, code):
+        url = f'{self.build_url("/api/link")}&file_code={code}'
+        try:
+            response = requests.get(url)
+            if response.status_code == 200:
+                if response.json().get('statusCode', -1) == 0:
+                    return response.json().get('data', {}).get('dlLink', False)
+        except Exception as err:
+            print(f'uptobox.generate_download_link exception - {err}')
+        return False

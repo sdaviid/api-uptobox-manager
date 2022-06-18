@@ -42,3 +42,7 @@ class Account(ModelBase, Base):
     def find_upload_api(cls, session):
         return session.query(cls).filter_by(type_key='U').first()
 
+
+    @classmethod
+    def find_premium_api(cls, session):
+        return session.query(cls).filter_by(type_key='D').first()
