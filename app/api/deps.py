@@ -70,7 +70,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     except JWTError as err:
         raise credentials_exception
     audience = payload.get('aud')
-    if not audience == 'cli-web-torrent':
+    if not audience == 'cli-web-uploader':
         raise credentials_exception
     return payload.get('sub')
 
