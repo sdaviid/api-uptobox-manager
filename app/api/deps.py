@@ -61,10 +61,16 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         if username is None:
             raise credentials_exception
         token_data = TokenData(username=username)
-    except JWTError:
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Expired JWT Token",
+            headers={"WWW-Authenticate": "invalid_token"},
+        )
+    except JWTError as err:
         raise credentials_exception
     audience = payload.get('aud')
-    if not audience == 'cli-web-uploader':
+    if not audience == 'cli-web-torrent':
         raise credentials_exception
     return payload.get('sub')
 
