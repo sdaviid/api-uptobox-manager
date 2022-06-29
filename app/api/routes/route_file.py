@@ -29,6 +29,10 @@ from app.core.uptobox import uptobox
 
 from app.core.database import get_db
 
+from app.api.deps import(
+    get_current_active_user
+)
+
 
 
 router = APIRouter()
@@ -40,7 +44,12 @@ router = APIRouter()
     '/upload',
     status_code=status.HTTP_200_OK
 )
-def upload(data: FileAddUpload, response: Response, db: Session = Depends(get_db)):
+def upload(
+    data: FileAddUpload,
+    response: Response,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_active_user)
+):
     temp_account = Account.find_upload_api(session=db)
     if temp_account:
         temp_uptobox = uptobox(temp_account.api_key)
@@ -66,7 +75,12 @@ def upload(data: FileAddUpload, response: Response, db: Session = Depends(get_db
     '/detail/{md5_key}',
     status_code=status.HTTP_200_OK
 )
-def detail(md5_key: str, response: Response, db: Session = Depends(get_db)):
+def detail(
+    md5_key: str,
+    response: Response,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_active_user)
+):
     temp_response = File.find_by_md5(session=db, md5_key=md5_key)
     if temp_response:
         return temp_response
@@ -82,7 +96,12 @@ def detail(md5_key: str, response: Response, db: Session = Depends(get_db)):
     '/download/{md5_key}',
     status_code=status.HTTP_200_OK
 )
-def download(md5_key: str, response: Response, db: Session = Depends(get_db)):
+def download(
+    md5_key: str,
+    response: Response,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_active_user)
+):
     temp_response = File.find_by_md5(session=db, md5_key=md5_key)
     if temp_response:
         temp_account = Account.find_premium_api(session=db)
@@ -116,7 +135,12 @@ def download(md5_key: str, response: Response, db: Session = Depends(get_db)):
     '/generate/',
     status_code=status.HTTP_200_OK
 )
-def download(uptobox_link: str, response: Response, db: Session = Depends(get_db)):
+def download(
+    uptobox_link: str,
+    response: Response,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_active_user)
+):
     temp_account = Account.find_premium_api(session=db)
     if temp_account:
         temp_uptobox = uptobox(temp_account.api_key)
