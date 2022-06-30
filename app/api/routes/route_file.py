@@ -30,7 +30,7 @@ from app.core.uptobox import uptobox
 from app.core.database import get_db
 
 from app.api.deps import(
-    get_current_active_user
+    allow_create_resource
 )
 
 
@@ -42,13 +42,13 @@ router = APIRouter()
 
 @router.post(
     '/upload',
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
+    dependencies=[Depends(allow_create_resource)]
 )
 def upload(
     data: FileAddUpload,
     response: Response,
-    db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_active_user)
+    db: Session = Depends(get_db)
 ):
     temp_account = Account.find_upload_api(session=db)
     if temp_account:
@@ -73,13 +73,13 @@ def upload(
 
 @router.get(
     '/detail/{md5_key}',
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
+    dependencies=[Depends(allow_create_resource)]
 )
 def detail(
     md5_key: str,
     response: Response,
-    db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_active_user)
+    db: Session = Depends(get_db)
 ):
     temp_response = File.find_by_md5(session=db, md5_key=md5_key)
     if temp_response:
@@ -94,13 +94,13 @@ def detail(
 
 @router.get(
     '/download/{md5_key}',
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
+    dependencies=[Depends(allow_create_resource)]
 )
 def download(
     md5_key: str,
     response: Response,
-    db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_active_user)
+    db: Session = Depends(get_db)
 ):
     temp_response = File.find_by_md5(session=db, md5_key=md5_key)
     if temp_response:
@@ -133,13 +133,13 @@ def download(
 
 @router.get(
     '/generate/',
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
+    dependencies=[Depends(allow_create_resource)]
 )
 def download(
     uptobox_link: str,
     response: Response,
-    db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_active_user)
+    db: Session = Depends(get_db)
 ):
     temp_account = Account.find_premium_api(session=db)
     if temp_account:

@@ -27,7 +27,7 @@ from app.core.uptobox import uptobox
 from app.core.database import get_db
 
 from app.api.deps import(
-    get_current_active_user
+    allow_create_resource
 )
 
 
@@ -35,17 +35,15 @@ from app.api.deps import(
 router = APIRouter()
 
 
-
-
 @router.post(
     '/register',
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
+    dependencies=[Depends(allow_create_resource)]
 )
 def register(
     data: AccountAdd,
     response: Response,
-    db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_active_user)
+    db: Session = Depends(get_db)
 ):
     temp = uptobox(data.api_key)
     if temp.status() != True:
